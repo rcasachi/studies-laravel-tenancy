@@ -33,7 +33,7 @@ return [
         'hostname' => \Hyn\Tenancy\Models\Hostname::class,
 
         // Must implement \Hyn\Tenancy\Contracts\Website
-        'website' => \Hyn\Tenancy\Models\Website::class
+        'website' => \App\Website::class
     ],
     /**
      * The package middleware. Removing a middleware here will disable it.

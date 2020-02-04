@@ -52,3 +52,4 @@ Route::middleware('tenant.exists')->group(function () {
 
 // Logged in
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('invoice/{invoice}', 'HomeController@invoice');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Website;
 
 class HomeController extends Controller
 {
@@ -23,6 +24,18 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $website = app(\Hyn\Tenancy\Environment::class)->tenant();
+        $invoices = $website->invoicesIncludingPending();
+        
+        return view('home')->with( ['invoices' => $invoices ] );
+    }
+
+    public function invoice( Request $request, $invoiceId )
+    {
+        $website = app(\Hyn\Tenancy\Environment::class)->tenant();
+        return $website->downloadInvoice($invoiceId, [
+            'vendor' => 'Your Company',
+            'product' => 'Your Product',
+        ]);
     }
 }

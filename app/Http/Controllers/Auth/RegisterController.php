@@ -14,7 +14,8 @@ use Hyn\Tenancy\Contracts\Repositories\HostnameRepository;
 use Hyn\Tenancy\Contracts\Repositories\WebsiteRepository;
 use Hyn\Tenancy\Environment;
 use Hyn\Tenancy\Models\Hostname;
-use Hyn\Tenancy\Models\Website;
+// use Hyn\Tenancy\Models\Website;
+use App\Website;
 
 class RegisterController extends Controller
 {
@@ -57,10 +58,11 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         $invalidSubdomains = config('app.invalid_subdomains');
-
+        $validPlans = [ 'swell', 'amazing' ];
+         
         return Validator::make($data, [
             'account' => [
-                'required',
+                'required', 
                 'string',
                 Rule::notIn($invalidSubdomains),
                 'regex:/^[A-Za-z0-9](?:[A-Za-z0-9\-]{0,61}[A-Za-z0-9])$/'
@@ -69,6 +71,8 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'product' => ['required', Rule::in($validPlans)],
+            'stripePaymentMethod' => ['required', 'string'],
         ]);
     }
 
@@ -80,12 +84,15 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        // Use the Tenancy package command to create the tenant
-        $hostname = $this->createTenant($data['fqdn']);
+        $hostname = $this->createTenant( 
+            $data['fqdn'], 
+            $data['product'], 
+            $data['stripePaymentMethod'],
+            $data['email']
+        );        
 
-        // swap the environment over to the hostname
         app(Environment::class)->hostname($hostname);
-
+        
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
@@ -93,16 +100,24 @@ class RegisterController extends Controller
         ]);
     }
 
-    private function createTenant($fqdn)
+    private function createTenant($fqdn, $product, $paymentMethod, $email)
     {
-        // first create the 'website'
         $website = new Website;
-        app(WebsiteRepository::class)->create($website);
+        app(WebsiteRepository::class)->create($website);   
 
-        // now associate the 'website' with a hostname
         $hostname = new Hostname;
         $hostname->fqdn = $fqdn;
         app(HostnameRepository::class)->attach($hostname, $website);
+
+        $plans = [
+            'swell' => 'plan_OPqrSTuVwxYZ',
+            'amazing' => 'plan_AbCdEfGHIjkLMN'
+        ];
+
+        // create the subscription
+        $website->newSubscription($product, $plans[$product])->create($paymentMethod, [
+            'email' => $email
+        ]);
 
         return $hostname;
     }
@@ -123,5 +138,18 @@ class RegisterController extends Controller
         $port = $request->server('SERVER_PORT') == 8000 ? ':8000' : '';
 
         return redirect(($request->secure() ? 'https://' : 'http://') . $fqdn . $port . '/login?success=1');
+    }
+
+    /**
+     * Show the application registration form.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function showRegistrationForm()
+    {
+        $website = new Website;
+        return view('auth.register', [
+            'intent' => $website->createSetupIntent()
+        ]);
     }
 }

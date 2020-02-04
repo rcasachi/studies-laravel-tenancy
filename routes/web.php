@@ -7,9 +7,13 @@ Route::domain('studies-laravel-tenancy.test')->group(function () {
         return view('welcome');
     });
 
-    // Registration Routes...
+    // Registration Routes
     Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
     Route::post('register', 'Auth\RegisterController@register');
+
+    // Login Routes
+    Route::get('login', 'Auth\LoginController@showDomainForm')->name('login.domain');
+    Route::post('login', 'Auth\LoginController@routeToTenant');
 
     // Catch All Route
     Route::any('{any}', function () {
@@ -22,7 +26,7 @@ Route::domain('studies-laravel-tenancy.test')->group(function () {
 Route::middleware('tenant.exists')->group(function () {
     // Not Logged In
     Route::get('/', function () {
-        return view('welcome');
+        return view('tenant-welcome');
     });
 
     // Login Routes

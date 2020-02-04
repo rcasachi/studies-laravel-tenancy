@@ -127,6 +127,61 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Invalid Subdomains
+    |--------------------------------------------------------------------------
+    |
+    | This list contains subdomains that are either unwanted or conflict
+    | with a system value.
+    |
+    */
+
+    'invalid_subdomains' => [
+        'admin',
+        'administrator',
+        'api',
+        'app',
+        'controlpanel',
+        'cp',
+        'custom_domain',
+        'custom_subdomain',
+        'dns',
+        'facebook',
+        'hooks',
+        'hostmaster',
+        'linkedin',
+        'mail',
+        'microsoft',
+        'node',
+        'nodestatus',
+        'ns',
+        'pagestatus',
+        'panel',
+        'pinterest',
+        'point',
+        'pointdns',
+        'root',
+        'self',
+        'service',
+        'servicestatus',
+        'sitestatus',
+        'staging',
+        'test',
+        'twitter',
+        'update',
+        'updates',
+        'webadmin',
+        'webhooks',
+        'webmail',
+        'webmaster',
+        'webnode',
+        'webstatus',
+        'worskpaces',
+        'www',
+        'www2'
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Autoloaded Service Providers
     |--------------------------------------------------------------------------
     |

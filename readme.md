@@ -24,10 +24,12 @@ APP_URL=http://${APP_URL_BASE}
 APP_URL_BASE=studies-laravel-tenancy.test
 ```
 
-- Install composer dependencies:
+- Install dependencies:
 ```
 composer install
+npm install
 php artisan config:cache
+npm run dev
 ```
 
 - Generate app key:

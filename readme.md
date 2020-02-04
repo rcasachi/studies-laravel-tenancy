@@ -6,7 +6,7 @@ The goals will be: Separate accounts by subdomain, Separate account content, Sep
 
 -  Create a database user that has privileges to CREATE DATABASE:
 ```
-CREATE DATABASE IF NOT EXISTS studies_laravel_tenancy;
+CREATE DATABASE IF NOT EXISTS studies_tenancy;
 CREATE USER IF NOT EXISTS studies_tenancy@localhost IDENTIFIED BY 'tenancy_123';
 GRANT ALL PRIVILEGES ON *.* TO studies_tenancy@localhost WITH GRANT OPTION;
 ```
@@ -19,11 +19,15 @@ TENANCY_PORT=3306
 TENANCY_DATABASE=studies_tenancy
 TENANCY_USERNAME=studies_tenancy
 TENANCY_PASSWORD=tenancy_123
+
+APP_URL=http://${APP_URL_BASE}
+APP_URL_BASE=studies-laravel-tenancy.test
 ```
 
 - Install composer dependencies:
 ```
 composer install
+php artisan config:cache
 ```
 
 - Generate app key:
@@ -31,3 +35,7 @@ composer install
 php artisan key:generate
 ```
 
+- Migrate your database:
+```
+php artisan migrate:fresh --database=system
+```
